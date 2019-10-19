@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from quart import Quart
 
 app = Quart(__name__)
@@ -6,4 +8,5 @@ app = Quart(__name__)
 async def hello():
     return 'hello'
 
-app.run()
+if __name__ == '__main__':
+	app.run()
