@@ -47,8 +47,14 @@ def allbills():
 	response = run_query(QUERY)
 	return response
 
+@app.route('/bill/<bill_id>', methods=['POST'])
+def follow(bill_id):
+	cur.execute(f'INSERT INTO preferred_bills VALUEVALUES (\'the0x539@droon.website\', \'{bill_id}\');')
+	return 'followed ' + bill_id + '!'
+
 @app.route('/bill/<bill_id>')
 def onebill(bill_id):
+	# TODO: sanitize input
 	bill = run_query(f"""
 {{
 	bill(jurisdiction: "Illinois", session: "101st", identifier: "{bill_id}") {{
