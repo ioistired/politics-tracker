@@ -51,7 +51,8 @@ nav.init_app(app)
 
 @app.route('/')
 def main():
-	return render_template('index.html')
+    data = run_query(QUERY)
+    return render_template('index.html', data=data)
 
 @app.route('/bills')
 def allbills():
@@ -125,8 +126,14 @@ QUERY = """
 			sources {
 			  url
 			}
+                        abstracts {
+                            abstract
+                            }
 			createdAt
 			updatedAt
+                        actions {
+                            date
+                            }
 		}
 	}
   }

@@ -26,11 +26,11 @@
 				<th>Date</th>
 			</tr>
 			</thead>
-			<% for item in data %>
+			{% for item in data['data']['bills']['edges'] %}
 			<tr>
-				<td>{{item[0]}}</td>
-				<td>{{item[1]}}</td>
-				<td>{{item[2]}}</td>
+				<td>{{ item['node']['identifier'] }}</td>
+				<td>{{ item['node']['abstracts'][0]['abstract'] }}</td>
+				<td>{{ item['node']['actions'][-1]['date'] }}</td>
 			</tr>
 			{% endfor %}
 		</table>
