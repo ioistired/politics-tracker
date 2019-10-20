@@ -1,3 +1,7 @@
 Flask
-requests
+Flask-Login
+flask-nav
+argon2-cffi
 psycopg2-binary
+requests
+sendgrid
