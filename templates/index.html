@@ -12,18 +12,31 @@
 <body>
 	<div id="content">{% block content  %}
 		<div id="nav">
-			<a href="/"><span class="button">Home</span></a>
-			<a href="/login"><span class="button">Login</span></a>
+			<div class="col-sm nav-align">
+				<a href="/"><span class="button">Home</span></a>
+				<a href="/login"><span class="button">Login</span></a>
+			</div>
 		</div>
 		<div id="header"><img src='https://placehold.it/1200x400?text=Slideshow' class="img-fluid" width="100% \9" alt=''/></div>
-
-		<div class="row">
-			<div class="left"></div>
-			<div class="middle"></div>
-			<div class="right">/div>
-		</div>
+		<table style="width:100%" class="row">
+			<thead>
+			<tr>
+				<th>Bills</th>
+				<th>Information</th>
+				<th>Date</th>
+			</tr>
+			</thead>
+			<% for item in data %>
+			<tr>
+				<td>{{item[0]}}</td>
+				<td>{{item[1]}}</td>
+				<td>{{item[2]}}</td>
+			</tr>
+			{% endfor %}
+		</table>
 
 	{% endblock %}</div>
+	<div id="footer">
 	{% block footer %}
 		&copy; Copyright 2###
 	{% endblock %}
