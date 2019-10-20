@@ -14,7 +14,7 @@ insert into categories values
 ('higher education'),
 ('city planning'),
 ('agriculture'),
-('environmental'),
+('conservation'),
 ('law enforcement'),
 ('aviation'),
 ('fraud'),
