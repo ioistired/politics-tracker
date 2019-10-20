@@ -9,10 +9,21 @@ import login
 from flask_login import LoginManager, current_user
 import requests
 from flask import Flask, render_template
+from flask_nav.elements import Navbar, View
+from flask_nav import Nav
 import json
 
 app = Flask(__name__, template_folder="templates", static_url_path='', 
             static_folder='static',)
+
+topbar = Navbar('',
+	View('Home', 'frontend.index'),
+	View('Your Account', 'frontend.account_info'),
+)
+
+nav = Nav()
+nav.register_element('top', topbar)
+nav.init_app(app)
 
 app.register_blueprint(login.bp)
 with open('secret_key.txt') as f:
@@ -36,8 +47,6 @@ app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/
 
 with open('secret_key.txt') as f:
 	app.secret_key = f.read().strip()
-
-# currently: only for Illinois
 
 @app.route('/')
 def main():
