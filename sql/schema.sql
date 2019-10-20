@@ -75,7 +75,7 @@ CREATE TABLE keywords (
 
 -- what categories people are interested in
 CREATE TABLE preferred_categories (
-	user_email TEXT NOT NULL REFERENCES users ON DELETE CASCADE,
+	user_email TEXT NOT NULL REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE,
 	category TEXT NOT NULL REFERENCES categories,
 
 	PRIMARY KEY (user_email, category)
@@ -88,7 +88,7 @@ CREATE TABLE bills (
 
 -- what bills people are tracking
 CREATE TABLE preferred_bills (
-	user_email TEXT NOT NULL REFERENCES users ON DELETE CASCADE,
+	user_email TEXT NOT NULL REFERENCES users ON DELETE CASCADE ON UPDATE CASCADE,
 	bill_id TEXT NOT NULL REFERENCES bills ON DELETE CASCADE,
 
 	PRIMARY KEY (user_email, bill_id)
