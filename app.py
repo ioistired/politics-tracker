@@ -4,11 +4,12 @@
 # See LICENSE.md for details
 
 import os
-
+import login
 import requests
 from flask import Flask
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
+app.register_blueprint(login.bp)
 
 @app.route('/')
 def hello():
