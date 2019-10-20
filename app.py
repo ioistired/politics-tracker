@@ -12,6 +12,8 @@ from flask import Flask, render_template
 from flask_nav.elements import Navbar, View
 from flask_nav import Nav
 import json
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 app = Flask(__name__, template_folder="templates", static_url_path='', 
             static_folder='static',)
@@ -68,7 +70,7 @@ def follow(bill_id):
 @app.route('/bill/<bill_id>')
 def onebill(bill_id):
     # TODO: sanitize input
-	bill = run_query(f"""
+    bill = run_query(f"""
 {{
 	bill(jurisdiction: "Illinois", session: "101st", identifier: "{bill_id}") {{
 		title
@@ -78,23 +80,23 @@ def onebill(bill_id):
 		abstracts {{
 			abstract
 		}}
-		actions {{
-			date
-			description
-			order
-		}}
+                actions {{
+                        description
+                        date
+                        
+                }}
 	}}
 }}
 """)['data']['bill']
-	
-	title = bill['title']
-	abstract = bill['abstracts'][0]['abstract']
-	actions = sorted(bill['actions'], key=lambda x: x['order'])
-        action = actions[len(actions)-1] #TODO: figure out which order these are sorted in
-	# TODO: use url to get full bill text
-	url = bill['sources'][0]['url']
-
-	return render_template('bill.html', title=title, abstract=abstract, action_date=action['date'], action_desc=action['description'])
+        
+    title = bill['title']
+    abstract = bill['abstracts'][0]['abstract']
+    action_desc = bill['actions'][0]['description']
+    action_date = bill['actions'][0]['date']
+    # TODO: use url to get full bill text
+    url = bill['sources'][0]['url']
+    sendUpdateEmail(bill_id)
+    return render_template('bill.html', title=title, abstract=abstract, action_desc=action_desc, action_date=action_date)
 
 # TODO set User-Agent too
 # TODO use g.session
@@ -131,6 +133,48 @@ QUERY = """
   }
 }
 """
+
+def sendUpdateEmail(bill_id):
+    # TODO: sanitize input
+    bill = run_query(f"""
+{{
+	bill(jurisdiction: "Illinois", session: "101st", identifier: "{bill_id}") {{
+		identifier
+		sources {{
+			url
+		}}
+		actions {{
+                        date
+			description
+		}}
+	}}
+}}
+""")['data']['bill']
+	
+    ide = bill['identifier']
+    date = bill['actions'][-1]['date']
+    action = bill['actions'][-1]['description']
+    # TODO: use url to get full bill text
+    url = bill['sources'][0]['url']
+
+    message = Mail(
+        from_email='apeck2@hawk.iit.edu',
+        to_emails=current_user.get_id(),
+        subject='A bill you are following has been updated',
+        html_content='<h1>' + ide + '</h1><p>New action has been taken on ' + ide + '</p><p>On ' + date + ', the following action occurred:</p><p>' + action + '</p>')
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        print(e.message)
+
+    #return render_template('index.html')
+
+
+
 
 if __name__ == '__main__':
 	app.run()
