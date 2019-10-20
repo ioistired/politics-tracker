@@ -9,6 +9,7 @@ import login
 from flask_login import LoginManager
 import requests
 from flask import Flask, render_template
+import json
 
 app = Flask(__name__, template_folder="templates", static_url_path='', 
             static_folder='static',)
@@ -42,6 +43,29 @@ def allbills():
 	response = run_query(QUERY)
 	return response
 
+@app.route('/bill/<bill_id>')
+def onebill(bill_id):
+	bill = run_query(f"""
+{{
+	bill(jurisdiction: "Illinois", session: "101st", identifier: "{bill_id}") {{
+		title
+		sources {{
+			url
+		}}
+		abstracts {{
+			abstract
+		}}
+	}}
+}}
+""")['data']['bill']
+	
+	title = bill['title']
+	abstract = bill['abstracts'][0]['abstract']
+	# TODO: use url to get full bill text
+	url = bill['sources'][0]['url']
+
+	return render_template('bill.html', title=title, abstract=abstract)
+
 # TODO set User-Agent too
 # TODO use g.session
 HEADERS = {'X-API-KEY': os.environ['OPENSTATES_API_KEY']}
@@ -61,6 +85,7 @@ QUERY = """
 	edges {
 		node {
 			title
+			identifier
 			otherTitles {
 				title
 				note
