@@ -12,44 +12,44 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return 'hello'
+	return 'hello'
 
 @app.route('/bills')
 def allbills():
-    response = run_query(QUERY)
-    return response
+	response = run_query(QUERY)
+	return response
 
 # TODO set User-Agent too
 # TODO use g.session
 HEADERS = {'X-API-KEY': os.environ['OPENSTATES_API_KEY']}
 
 def run_query(query): # A simple function to use requests.post to make the API call. Note the json= section.
-    request = requests.post('https://openstates.org/graphql', json={'query': query}, headers=HEADERS)
-    if request.status_code == 200:
-        return request.json()
-    else:
-        raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, query))
+	request = requests.post('https://openstates.org/graphql', json={'query': query}, headers=HEADERS)
+	if request.status_code == 200:
+		return request.json()
+	else:
+		raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, query))
 
 
 # The GraphQL query (with a few aditional bits included) itself defined as a multi-line string.
 QUERY = """
 {
   bills(jurisdiction: "Illinois", session: "101st", first: 20) {
-    edges {
-        node {
-            title
-            otherTitles {
-                title
-                note
-            }
-            subject
-            sources {
-              url
-            }
-            createdAt
-            updatedAt
-        }
-    }
+	edges {
+		node {
+			title
+			otherTitles {
+				title
+				note
+			}
+			subject
+			sources {
+			  url
+			}
+			createdAt
+			updatedAt
+		}
+	}
   }
 }
 """
