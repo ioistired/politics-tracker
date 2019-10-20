@@ -7,6 +7,7 @@ from argon2 import PasswordHasher
 bp = Blueprint('login', __name__)
 conn = psycopg2.connect("dbname=politics user=postgres")
 cur = conn.cursor()
+ph = PasswordHasher()
 
 class User:
     def __init__(self, is_authenticated, is_active, is_anonymous, user_id):
@@ -22,10 +23,13 @@ class User:
 def login():
     error = None
     if request.method == 'POST':
-        email = request.form.get('email', 'test.test')
-
-        user = User(True, True, False, email)
-        login_user(user)
+        email = request.form.get('inputEmail', 'test@test')
+        password = request.form.get('inputPassword', 'test')
+        cur.execute('select * from users where user_email = %s', [email])
+        line = cur.fetchone()
+        if line[2] == ph.hash(password):
+            user = User(True, True, False, email)
+            login_user(user)
         return redirect('/')
         # add actual logging in here!!
         
@@ -35,10 +39,9 @@ def login():
 def register():
     error = None
     if request.method == 'POST':
-        email = request.form.get('email', 'test@test')
-        password = request.form.get('password', 'test')
-        state = request.form.get('state', 'Nebraska')
-        ph = PasswordHasher()
+        email = request.form.get('inputEmail', 'test@test')
+        password = request.form.get('inputPassword', 'test')
+        state = request.form.get('inputState', 'Nebraska')
         hash = ph.hash(password)
         cur.execute('insert into users values (%s, %s,  %s);', [email, hash, state])
         conn.commit()
