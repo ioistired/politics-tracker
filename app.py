@@ -4,12 +4,24 @@
 # See LICENSE.md for details
 
 import os
-import login
+
+import jinja2
 import requests
 from flask import Flask
 
-app = Flask(__name__, template_folder="templates")
+import login
+
+app = Flask(__name__)
 app.register_blueprint(login.bp)
+
+app.jinja_env.line_statement_prefix = '-- :'  # for SQL
+app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/
+	jinja2.FileSystemLoader('templates'),
+	jinja2.FileSystem('sql'),
+])
+
+with open('secret_key.txt') as f:
+	app.secret_key = f.read().strip()
 
 @app.route('/')
 def hello():

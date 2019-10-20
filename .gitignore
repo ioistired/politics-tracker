@@ -6,3 +6,5 @@ __pycache__
 .coveragerc
 *.build/
 .pytest_cache/
+
+secret_key.txt
