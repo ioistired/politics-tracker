@@ -3,33 +3,36 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # See LICENSE.md for details
 
-from quart import Quart
-import aiohttp
+import os
 
-app = Quart(__name__)
+import requests
+from flask import Flask
+
+app = Flask(__name__)
 
 @app.route('/')
-async def hello():
+def hello():
     return 'hello'
 
 @app.route('/bills')
-async def allbills():
-    response = run_query(query)
+def allbills():
+    response = run_query(QUERY)
     return response
 
-headers = {"X-API-KEY": "***REMOVED***"}
-
+# TODO set User-Agent too
+# TODO use g.session
+HEADERS = {'X-API-KEY': os.environ['OPENSTATES_API_KEY']}
 
 def run_query(query): # A simple function to use requests.post to make the API call. Note the json= section.
-    request = requests.post('https://openstates.org/graphql', json={'query': query}, headers=headers)
+    request = requests.post('https://openstates.org/graphql', json={'query': query}, headers=HEADERS)
     if request.status_code == 200:
         return request.json()
     else:
         raise Exception("Query failed to run by returning code of {}. {}".format(request.status_code, query))
 
-        
-# The GraphQL query (with a few aditional bits included) itself defined as a multi-line string.       
-query = """
+
+# The GraphQL query (with a few aditional bits included) itself defined as a multi-line string.
+QUERY = """
 {
   bills(jurisdiction: "Illinois", session: "101st", first: 20) {
     edges {
@@ -49,7 +52,6 @@ query = """
     }
   }
 }
-
 """
 
 if __name__ == '__main__':
