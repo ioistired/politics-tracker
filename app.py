@@ -7,7 +7,7 @@ import os
 
 import jinja2
 import requests
-from flask import Flask
+from flask import Flask, render_template
 
 import login
 
@@ -23,9 +23,11 @@ app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/
 with open('secret_key.txt') as f:
 	app.secret_key = f.read().strip()
 
+# currently: only for Illinois
+
 @app.route('/')
-def hello():
-	return 'hello'
+def main():
+	return render_template('index.html')
 
 @app.route('/bills')
 def allbills():
