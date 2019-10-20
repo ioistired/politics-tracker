@@ -6,3 +6,15 @@
 	display: inline-block;
 	color: #fff;
 }
+
+.column {
+	float: left;
+}
+
+.left, .right {
+	width: 25%;
+}
+
+.middle {
+	width: 50%;
+}

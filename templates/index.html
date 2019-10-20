@@ -7,17 +7,26 @@
 	<meta http-equiv="X-UA-Compatible" content"ie=edge">
 	<title>{% block title %}Politics Tracker{% endblock %}</title>
 	{% endblock %}
+	<link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-	<div id="nav">{% block nav %}
-		<a href="/"><span class="button">Home</span></a>
-		<a href="/login"><span class="button">Login</span></a>
+	<div id="content">{% block content  %}
+		<div id="nav">
+			<a href="/"><span class="button">Home</span></a>
+			<a href="/login"><span class="button">Login</span></a>
+		</div>
+		<div id="header"><img src='https://placehold.it/1200x400?text=Slideshow' class="img-fluid" width="100% \9" alt=''/></div>
+
+		<div class="row">
+			<div class="left"></div>
+			<div class="middle"></div>
+			<div class="right">/div>
+		</div>
+
 	{% endblock %}</div>
-	<div id="header"><img src='https://placehold.it/1100x300?text=Slideshow' class="img-fluid" width="100% \9" alt=''/></div>
-	<div id="footer">
-		{% block footer %}
+	{% block footer %}
 		&copy; Copyright 2###
-		{% endblock %}
+	{% endblock %}
 	</div>
 </body>
 </html>
