@@ -6,7 +6,7 @@ import psycopg2
 import os
 import jinja2
 import login
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 import requests
 from flask import Flask, render_template
 from flask_nav.elements import Navbar, View
@@ -36,8 +36,9 @@ cur = conn.cursor()
 
 @login_manager.user_loader
 def load_user(user_id):
-    #cur.execute("select * from users where email=
-    return login.User(True, True, False, user_id);
+    cur.execute("select * from users where user_email = %s", [user_id])
+    if cur.fetchone() != None:
+        return login.User(True, True, False, user_id);
 
 app.jinja_env.line_statement_prefix = '-- :'  # for SQL
 app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/
@@ -58,12 +59,15 @@ def allbills():
 
 @app.route('/bill/<bill_id>', methods=['POST'])
 def follow(bill_id):
-	cur.execute(f'INSERT INTO preferred_bills VALUEVALUES (\'the0x539@droon.website\', \'{bill_id}\');')
-	return 'followed ' + bill_id + '!'
+    if (current_user.is_authenticated):
+        user_id = current_user.get_id()
+        cur.execute(f'INSERT INTO preferred_bills VALUES (%s, %s);',[user_id,bill_id])
+        conn.commit()
+        return 'followed ' + bill_id + '!'
 
 @app.route('/bill/<bill_id>')
 def onebill(bill_id):
-	# TODO: sanitize input
+    # TODO: sanitize input
 	bill = run_query(f"""
 {{
 	bill(jurisdiction: "Illinois", session: "101st", identifier: "{bill_id}") {{
