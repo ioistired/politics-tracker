@@ -65,16 +65,23 @@ def onebill(bill_id):
 		abstracts {{
 			abstract
 		}}
+		actions {{
+			date
+			description
+			order
+		}}
 	}}
 }}
 """)['data']['bill']
 	
 	title = bill['title']
 	abstract = bill['abstracts'][0]['abstract']
+	actions = sorted(bill['actions'], key=lambda x: x['order'])
+        action = actions[len(actions)-1] #TODO: figure out which order these are sorted in
 	# TODO: use url to get full bill text
 	url = bill['sources'][0]['url']
 
-	return render_template('bill.html', title=title, abstract=abstract)
+	return render_template('bill.html', title=title, abstract=abstract, action_date=action['date'], action_desc=action['description'])
 
 # TODO set User-Agent too
 # TODO use g.session
