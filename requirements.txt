@@ -2,6 +2,7 @@ Flask
 Flask-Login
 flask-nav
 argon2-cffi
+gunicorn
 psycopg2-binary
 requests
 sendgrid
