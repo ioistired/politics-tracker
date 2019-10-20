@@ -36,8 +36,6 @@ app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/
 with open('secret_key.txt') as f:
 	app.secret_key = f.read().strip()
 
-# currently: only for Illinois
-
 @app.route('/')
 def main():
 	return render_template('index.html')
