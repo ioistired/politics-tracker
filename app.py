@@ -2,7 +2,7 @@
 
 # SPDX-License-Identifier: GPL-2.0-or-later
 # See LICENSE.md for details
-
+import psycopg2
 import os
 import jinja2
 import login
@@ -19,9 +19,13 @@ with open('secret_key.txt') as f:
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+conn = psycopg2.connect("dbname=politics user=postgres")
+cur = conn.cursor()
+
 @login_manager.user_loader
 def load_user(user_id):
-    return login.User(True, True, False, "test.test.com")
+    #cur.execute("select * from users where email=
+    return login.User(True, True, False, user_id);
 
 app.jinja_env.line_statement_prefix = '-- :'  # for SQL
 app.jinja_env.loader = jinja2.ChoiceLoader([  # try templates/ first then sql/

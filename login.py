@@ -1,8 +1,12 @@
 from flask_login import login_user
 from flask import Blueprint, render_template, redirect, url_for, request
 from jinja2 import TemplateNotFound, Template
+import psycopg2
+from argon2 import PasswordHasher
 
 bp = Blueprint('login', __name__)
+conn = psycopg2.connect("dbname=politics user=postgres")
+cur = conn.cursor()
 
 class User:
     def __init__(self, is_authenticated, is_active, is_anonymous, user_id):
@@ -18,7 +22,8 @@ class User:
 def login():
     error = None
     if request.method == 'POST':
-        email = "test@test.com"
+        email = request.form.get('email', 'test.test')
+
         user = User(True, True, False, email)
         login_user(user)
         return redirect('/')
@@ -26,3 +31,22 @@ def login():
         
     return render_template('login.html', error=error)
 
+@bp.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        email = request.form.get('email', 'test@test')
+        password = request.form.get('password', 'test')
+        state = request.form.get('state', 'Nebraska')
+        ph = PasswordHasher()
+        hash = ph.hash(password)
+        cur.execute('insert into users values (%s, %s,  %s);', [email, hash, state])
+        conn.commit()
+        cur.close()
+        conn.close()
+        user = User(True, True, False, email)
+        login_user(user)
+        return redirect('/')
+        # add actual logging in here!!
+        
+    return render_template('register.html', error=error)
